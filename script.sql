@@ -6,29 +6,44 @@ CREATE TABLE person_cs(
     firstName VARCHAR(255),
     lastName VARCHAR(255),
     address TEXT,
-    age INT
+    age INT,
+	stateId INT
 ) ENGINE=ColumnStore;
 
 CREATE TABLE person_inno(
     firstName VARCHAR(255),
     lastName VARCHAR(255),
     address TEXT,
-    age INT
-) engine=innodb;
+    age INT,
+	stateId INT
+) engine=InnoDB;
+
+CREATE TABLE states (
+    id INT NOT NULL,
+    state TEXT NOT NULL
+) ENGINE = InnoDB;
+
+LOAD DATA INFILE '/tmp/states.csv'
+INTO TABLE states
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(id, state);
+
 /*
 LOAD DATA INFILE '/tmp/entries.csv'
 INTO TABLE person_cs
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
-(firstName, lastName, address, age);
+(firstName, lastName, address, age, stateId);
 
 LOAD DATA INFILE '/tmp/entries.csv'
 INTO TABLE person_inno
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
-(firstName, lastName, address, age);
+(firstName, lastName, address, age, stateId);
 
 select count(*), age from person_cs group by age having age > 12 order by age asc;
 
@@ -65,7 +80,11 @@ VALUES
     ('Mary', 'White', '765 Oak St', 31);
 
 CREATE INDEX idx_age ON person_inno(age);
+CREATE INDEX idx_state_id ON person_inno(stateId);
 
 select count(*), age from person_inno group by age having age > 12 order by age asc;
+
+select count(*), state from person_inno p join states s on p.stateId = s.id where p.age > 31 group by s.state;
+select count(*), state from person_cs p join states s on p.stateId = s.id where p.age > 31 group by s.state;
 
 */

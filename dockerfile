@@ -6,5 +6,6 @@ ENV PM1=mcs
 # Copy your SQL script and CSV file into the container
 COPY script.sql /tmp/
 COPY entries.csv /tmp/
+COPY states.csv /tmp/
 
 # Run the provision command within the container
